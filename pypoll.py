@@ -12,6 +12,7 @@ navigation = '''
 <h3>endpoints</h3>
     <ul>
         <li> <a href="/"      >/</a>       </li>
+        <li> <a href="/poll"  >/poll</a>   </li>
         <li> <a href="/create">/create</a> </li>
         <li> <a href="/insert">/insert</a> </li>
         <li> <a href="/select">/select</a> </li>
@@ -47,6 +48,16 @@ def get_db():
         db.execute('PRAGMA foreign_keys = 1')
     return db
 
+def create_tables():
+    conn = get_db()
+    #try:
+    with app.open_resource('tables.sql', mode='r') as t:
+        conn.cursor().executescript(t.read())
+    #except sqlite3.OperationalError:
+    #    print('Database exists already')
+    #    raise
+    conn.commit()
+
 def query_db(query, args=()):
     return get_db().execute(query, args)
 
@@ -78,21 +89,28 @@ def poll_test():
     <form method="post">
     <p><input type=text name=username>
     <p><input type=submit name=whatever>
-    </form>
+    </form
     '''
+@app.route('/add', methods=['GET', 'POST'])
+def add_test():
+    if request.method == 'POST':
+        if 'unique_id' in session:
+            return 'thonk'
+        session['unique_id'] = make_unique_id()
+        now = time.time()
+        conn = get_db()
+        c = conn.cursor()
+        values = (now, session['unique_id'], request.remote_addr)
+        c.execute("INSERT INTO users (date, cookie, ip) VALUES (?, ?, ?)", values)
 
 
-@app.route('/create')
-def create_test():
-    conn = get_db()
-    #try:
-    with app.open_resource('tables.sql', mode='r') as t:
-        conn.cursor().executescript(t.read())
-    #except sqlite3.OperationalError:
-    #    print('Database exists already')
-    #    raise
-    conn.commit()
-    return navigation
+        return redirect(url_for('home'))
+    return '''
+    <form method="post">
+    <p><input type=text name=username>
+    <p><input type=submit name=whatever>
+    </form
+    '''
 
 @app.route('/insert')
 def insert_test():
