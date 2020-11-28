@@ -13,7 +13,7 @@ navigation = '''
     <ul>
         <li> <a href="/"      >/</a>       </li>
         <li> <a href="/poll"  >/poll</a>   </li>
-        <li> <a href="/create">/create</a> </li>
+        <li> <a href="/add-q"  >/add-q</a> </li>
         <li> <a href="/insert">/insert</a> </li>
         <li> <a href="/select">/select</a> </li>
     </ul>
@@ -50,12 +50,9 @@ def get_db():
 
 def create_tables():
     conn = get_db()
-    #try:
     with app.open_resource('tables.sql', mode='r') as t:
         conn.cursor().executescript(t.read())
-    #except sqlite3.OperationalError:
-    #    print('Database exists already')
-    #    raise
+        # if this fails it will raise sqlite3.OperationalError
     conn.commit()
 
 def query_db(query, args=()):
@@ -89,28 +86,50 @@ def poll_test():
     <form method="post">
     <p><input type=text name=username>
     <p><input type=submit name=whatever>
-    </form
+    </form>
     '''
-@app.route('/add', methods=['GET', 'POST'])
-def add_test():
+@app.route('/add-q', methods=['GET', 'POST'])
+def add_question():
     if request.method == 'POST':
-        if 'unique_id' in session:
-            return 'thonk'
-        session['unique_id'] = make_unique_id()
-        now = time.time()
         conn = get_db()
         c = conn.cursor()
-        values = (now, session['unique_id'], request.remote_addr)
-        c.execute("INSERT INTO users (date, cookie, ip) VALUES (?, ?, ?)", values)
-
-
-        return redirect(url_for('home'))
+        question = request.form['question']
+        c.execute("INSERT INTO radio_questions (question) VALUES (?)", (question, ))
+        return redirect(url_for('add_answer', quest=c.lastrowid))
+        #TODO: replace c.lastrowid with a large random number.
     return '''
     <form method="post">
-    <p><input type=text name=username>
-    <p><input type=submit name=whatever>
-    </form
+    <p><input type=text name=question>
+    <p><input type=submit name=okay>
+    </form>
     '''
+@app.route('/add-a', methods=['GET', 'POST'])
+def add_answer():
+    q_id = request.args.get('quest', '')
+    question = query_db('SELECT * from radio_questions WHERE id=?', q_id)
+    # if no row redirect to add_question()
+    if request.method == 'POST':
+        conn = get_db()
+        c = conn.cursor()
+        answer = request.form['answer']
+        c.execute('''INSERT INTO radio_question_answers
+                (radio_question_id, answer) VALUES (?, ?)''', (q_id, answer))
+        return redirect(url_for('add_answer', quest=q_id))
+    ret ="<h2>Add an answer to a question</h2>"
+    ret += 'Question: "'
+    ret += question.fetchone()['question']
+    ret += '"<br>'
+    for row in query_db('SELECT answer FROM radio_question_answers WHERE radio_question_id=?', q_id):
+        ret += 'q '
+        ret += row['answer']
+        ret += '<br>'
+    ret += '''
+    <form method="post">
+    <p><input type=text name=answer>
+    <p><input type=submit name=okay>
+    </form>
+    '''
+    return ret
 
 @app.route('/insert')
 def insert_test():
@@ -119,14 +138,6 @@ def insert_test():
     values = (time.time(), make_unique_id(), '127.0.0.1')
     c.execute("INSERT INTO users (date, cookie, ip) VALUES (?, ?, ?)", values)
     return navigation + '<p>done</p>'
-
-@app.route('/sel')
-def sel():
-    for trans in query_db('SELECT * from users WHERE ip="127.0.0.1"'):
-        print(trans['date'])
-        print(str(tuple(trans)))
-    return 'ha'
-
 
 @app.route('/select')
 def select_test():
