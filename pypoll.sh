@@ -8,14 +8,13 @@ export FLASK_ENV=development
 cd "$DIR"
 python3 << EOF
 import pypoll
-f = {}
+f = None
 try:
     f = open(pypoll.database)
+    f.close()
 except IOError:
     with pypoll.app.app_context():
         pypoll.create_tables()
-finally:
-    f.close()
 EOF
 cd -
 flask run
