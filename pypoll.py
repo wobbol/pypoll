@@ -112,9 +112,6 @@ def poll_end():
     ret += '<a href="' + url_for('home') + '">back</a>'
     return ret
 
-
-
-
 @app.route('/poll', methods=['GET', 'POST'])
 def poll_test():
     conn = get_db()
@@ -164,14 +161,7 @@ def poll_test():
     <p><input type=submit name=whatever>
     </form>
     '''
-    #ret += '<form method="post" action="' + url_for('poll_test',poll=p_id,ques=q_id) + '">'
-    #ret += '''
-    #<p><input type=text name=username>
-    #'''
-    #ret += '<input type=submit name=whatever action="' + url_for('poll_test',poll=p_id,ques=q_id) + '">'
-    #ret += '</form>'
     return ret
-
 
 @app.route('/add-p', methods=['GET', 'POST'])
 def add_poll():
