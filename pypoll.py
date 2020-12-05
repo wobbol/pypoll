@@ -78,7 +78,10 @@ def authorized_row(token):
 
 @app.route(urlbase + '/')
 def home():
-    return navigation
+    ret = ""
+    ret += "<h1>Welcome</h1>"
+    ret += navigation
+    return ret
 
 def get_user_id(request, session, makenew=True):
     c = get_db().cursor()
