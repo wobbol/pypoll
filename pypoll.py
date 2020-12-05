@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(16) # TODO: store this in a file
 
 database = 'data.db'
+urlbase = 'python-poll'
 navigation = '''
 <h3>endpoints</h3>
     <ul>
@@ -75,7 +76,7 @@ def authorized_row(token):
         return rowid
     return None
 
-@app.route('/')
+@app.route(urlbase + '/')
 def home():
     return navigation
 
@@ -100,7 +101,7 @@ def get_user_id(request, session, makenew=True):
 def get_next_question_id(poll, ques):
     #TODO
     return
-@app.route('/thanks')
+@app.route(urlbase + '/thanks')
 def poll_end():
     conn = get_db()
     c = conn.cursor()
@@ -112,7 +113,7 @@ def poll_end():
     ret += '<a href="' + url_for('home') + '">back</a>'
     return ret
 
-@app.route('/poll', methods=['GET', 'POST'])
+@app.route(urlbase + '/poll', methods=['GET', 'POST'])
 def poll_test():
     conn = get_db()
     c = conn.cursor()
@@ -163,7 +164,7 @@ def poll_test():
     '''
     return ret
 
-@app.route('/add-p', methods=['GET', 'POST'])
+@app.route(urlbase + '/add-p', methods=['GET', 'POST'])
 def add_poll():
     if request.method == 'POST':
         conn = get_db()
@@ -180,7 +181,7 @@ def add_poll():
     </form>
     '''
 
-@app.route('/add-q', methods=['GET', 'POST'])
+@app.route(urlbase + '/add-q', methods=['GET', 'POST'])
 def add_question():
     token = request.args.get('auth')
     poll_id = authorized_row(token)
@@ -202,7 +203,7 @@ def add_question():
     <p><input type=submit name=ok value="Okay">
     </form>
     '''
-@app.route('/add-a', methods=['GET', 'POST'])
+@app.route(urlbase + '/add-a', methods=['GET', 'POST'])
 def add_answer():
     token = request.args.get('auth')
     if not authorized_row(token):
@@ -245,7 +246,7 @@ def add_answer():
     '''
     return ret
 
-@app.route('/status-p', methods=['GET'])
+@app.route(urlbase + '/status-p', methods=['GET'])
 def poll_status():
     token = request.args.get('auth')
     p_id = authorized_row(token)
@@ -276,7 +277,7 @@ def poll_status():
     return ret
 
 
-@app.route('/insert')
+@app.route(urlbase + '/insert')
 def insert_test():
     conn = get_db()
     c = conn.cursor()
@@ -284,7 +285,7 @@ def insert_test():
     c.execute("INSERT INTO users (date, cookie, ip) VALUES (?, ?, ?)", values)
     return navigation + '<p>done</p>'
 
-@app.route('/select')
+@app.route(urlbase + '/select')
 def select_test():
     conn = get_db()
     c = conn.cursor()
