@@ -23,12 +23,24 @@ Then visit http://127.0.0.1:5000
 ## Goals
 
 - gather data
-- data validation
-- Usable without writing code
+  - user
+    - multiple choice
+    - freeform
+  - server
+    - /health
+      - git commit hash
+      - server load
+    - /metrics
+      - prometheus endpoint
+      - json
+- data export
+  - csv
+  - sqlite3
 - Initializes its own database
 
 ## Anti-goals
 
 - js
+- code required for users
 - themes
 - charts
