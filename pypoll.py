@@ -16,10 +16,10 @@ navigation = '''
         <li> <a href="/"      >/</a>       </li>
         <li> <a href="/poll"  >/poll</a>   </li>
         <li> <a href="/add-p"  >/add-p</a> </li>
-        <li> <a href="/insert">/insert</a> </li>
         <li> <a href="/select">/select</a> </li>
     </ul>
 '''
+
 def make_unique_id():
     #TODO: report birthday paradox numbers here
     return os.urandom(9)
@@ -277,13 +277,13 @@ def poll_status():
     return ret
 
 
-@app.route(urlbase + '/insert')
-def insert_test():
-    conn = get_db()
-    c = conn.cursor()
-    values = (time.time(), make_unique_id(), '127.0.0.1')
-    c.execute("INSERT INTO users (date, cookie, ip) VALUES (?, ?, ?)", values)
-    return navigation + '<p>done</p>'
+#@app.route(urlbase + '/insert')
+#def insert_test():
+#    conn = get_db()
+#    c = conn.cursor()
+#    values = (time.time(), make_unique_id(), '127.0.0.1')
+#    c.execute("INSERT INTO users (date, cookie, ip) VALUES (?, ?, ?)", values)
+#    return navigation + '<p>done</p>'
 
 @app.route(urlbase + '/select')
 def select_test():
