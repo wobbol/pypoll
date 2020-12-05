@@ -11,7 +11,7 @@ app.secret_key = os.urandom(16) # TODO: store this in a file
 database = 'data.db'
 urlbase = 'python-poll'
 navigation = '''
-<h3>endpoints</h3>
+<h3>Navigation</h3>
     <ul>
         <li> <a href="/"      >/</a>       </li>
         <li> <a href="/poll"  >/poll</a>   </li>
