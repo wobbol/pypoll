@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(16) # TODO: store this in a file
 
 database = 'data.db'
-urlbase = 'python-poll'
+urlbase = '/python-poll'
 navigation = '''
 <h3>Navigation</h3>
     <ul>
@@ -84,7 +84,7 @@ def get_user_id(request, session, makenew=True):
     c = get_db().cursor()
     u_row = None
     if 'unique_id' in session:
-        u_row = c.execute("SELECT id FROM users WHERE cookie=?",(session['unique_id'], )).fetchone()
+        u_row = c.execute("SELECT id FROM users WHERE cookie=?", (session['unique_id'], )).fetchone()
     else:
         session['unique_id'] = make_unique_id()
     if u_row:
