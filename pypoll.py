@@ -10,15 +10,16 @@ app.secret_key = os.urandom(16) # TODO: store this in a file
 
 database = 'data.db'
 urlbase = '/python-poll'
-navigation = '''
-<h3>Navigation</h3>
-    <ul>
-        <li> <a href="/"      >/</a>       </li>
-        <li> <a href="/poll"  >/poll</a>   </li>
-        <li> <a href="/add-p"  >/add-p</a> </li>
-        <li> <a href="/select">/select</a> </li>
-    </ul>
-'''
+def navigation():
+    n = ""
+    n += "<h3>Navigation</h3>"
+    n += "<ul>"
+    n += '<li> <a href="'+url_for('home')+'">'+url_for('home')+'</a></li>'
+    n += '<li> <a href="'+url_for('poll_test')+'">'+url_for('poll_test')+'</a></li>'
+    n += '<li> <a href="'+url_for('add_poll')+'">'+url_for('add_poll')+'</a></li>'
+    n += '<li> <a href="'+url_for('select_test')+'">'+url_for('select_test')+'</a></li>'
+    n += "</ul>"
+    return n
 
 def make_unique_id():
     #TODO: report birthday paradox numbers here
@@ -80,7 +81,7 @@ def authorized_row(token):
 def home():
     ret = ""
     ret += "<h1>Welcome</h1>"
-    ret += navigation
+    ret += navigation()
     return ret
 
 def get_user_id(request, session, makenew=True):
@@ -301,5 +302,5 @@ def select_test():
         ret += str(row['ip']) + ""
         ret += '<br>\n'
     conn.close()
-    return navigation + ret
+    return navigation() + ret
 
