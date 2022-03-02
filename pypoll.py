@@ -113,6 +113,11 @@ def authorized_row(token):
 def page_not_found(idx):
     return "<h1>Not Found</h1>", 404
 
+#XXX: Causes a redirect loop if urlbase == ''
+@app.route('/')
+def empty():
+    return redirect(url_for('home'), 302, None)
+
 @app.route(urlbase + '/')
 def home():
     ret = ""
