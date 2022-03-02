@@ -2,7 +2,7 @@ import sqlite3
 import os
 import time
 import base64
-from flask import Flask, session, redirect, url_for, request, g
+from flask import Flask, session, redirect, url_for, request, g, abort
 from socket import inet_pton, inet_ntop
 from struct import unpack, pack
 
@@ -52,7 +52,7 @@ def navigation():
     n += "<h3>Navigation</h3>"
     n += "<ul>"
     n += '<li> <a href="'+url_for('home')+'">'+url_for('home')+'</a></li>'
-    n += '<li> <a href="'+url_for('poll_test')+'">'+url_for('poll_test')+'</a></li>'
+    #n += '<li> <a href="'+url_for('poll_test')+'">'+url_for('poll_test')+'</a></li>'
     n += '<li> <a href="'+url_for('add_poll')+'">'+url_for('add_poll')+'</a></li>'
     n += '<li> <a href="'+url_for('select_test')+'">'+url_for('select_test')+'</a></li>'
     n += "</ul>"
@@ -107,6 +107,11 @@ def authorized_row(token):
     if count == 1:
         return rowid
     return None
+
+@app.errorhandler(404)
+@app.errorhandler(500)
+def page_not_found(idx):
+    return "<h1>Not Found</h1>", 404
 
 @app.route(urlbase + '/')
 def home():
@@ -213,6 +218,8 @@ def poll_test():
 
     p_id = request.args.get('poll')
     q_id = request.args.get('ques')
+    if p_id == None:
+        return abort(404)
     u_id = get_user_id(request, session)
 
     p_name = poll_name(p_id) #XXX: unused
